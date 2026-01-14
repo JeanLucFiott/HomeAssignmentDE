@@ -1,0 +1,35 @@
+# Python Cache
+__pycache__
+*.py[cod]
+*.egg-info
+dist
+build
+
+# Virtual Environment
+venv
+.venv
+env
+
+# Testing
+.pytest_cache
+.coverage
+
+# IDE
+.vscode
+.idea
+
+# Environment variables (sensitive data should not be deployed)
+.env
+.env.local
+.env.prod
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local development files
+*.log
+.cache
+
+# Static files
+static/
