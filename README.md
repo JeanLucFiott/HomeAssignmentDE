@@ -102,6 +102,111 @@ git log                # View commit history
 | Pydantic | Data validation and serialization | 2.12.5+ |
 | Python-dotenv | Environment variable management | 1.2.1+ |
 | Requests | HTTP client library | 2.32.5+ |
+| Python-multipart | Support for file uploads in FastAPI | 0.0.5+ |
+
+## Getting Started
+
+### Prerequisites
+- Python 3.9 or higher
+- MongoDB instance (local or Atlas)
+- Virtual environment activated
+
+### Installation
+
+1. **Clone the repository** (if applicable)
+```bash
+git clone <repository-url>
+cd HomeAssignment
+```
+
+2. **Activate the virtual environment**
+```bash
+# Windows
+.venv\Scripts\activate
+
+# macOS/Linux
+source .venv/bin/activate
+```
+
+3. **Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+4. **Set up environment variables**
+Create a `.env` file in the project root:
+```env
+MONGO_CONNECTION_STRING=your_mongodb_connection_string
+```
+
+5. **Run the server**
+```bash
+python -m uvicorn app:app --reload --host 127.0.0.1 --port 8000
+```
+
+### Running the Test Suite
+
+Once the server is running, access the test suite:
+
+**URL:** `http://127.0.0.1:8000/static/test_suite.html`
+
+The test suite provides an interactive web interface to test all API endpoints:
+- **Events Management**: Create, read, update, and delete events
+- **Attendees Management**: Register and manage event attendees
+- **Venues Management**: Create and manage venue information
+- **Bookings Management**: Create and manage ticket bookings
+- **Multimedia Management**: Upload event posters, promotional videos, and venue photos
+
+#### Test Suite Features
+1. **Base URL Configuration** - Modify the API endpoint URL if needed (default: http://127.0.0.1:8000)
+2. **ID Storage** - Automatically stores created resource IDs for easy reference
+3. **Response Display** - Shows HTTP status codes and JSON responses
+4. **All CRUD Operations** - Test all Create, Read, Update, and Delete operations
+5. **File Upload** - Test multimedia upload functionality
+
+#### Example Workflow
+1. Open the test suite in your browser
+2. Go to the **Venues** tab and create a new venue
+3. Note the returned venue ID from the response
+4. Go to the **Events** tab and create a new event (use the venue ID)
+5. Go to the **Attendees** tab and register attendees
+6. Go to the **Bookings** tab and create bookings for your event
+7. Go to the **Multimedia** tab to upload posters and videos
+
+## API Endpoints
+
+### Events
+- `POST /events` - Create a new event
+- `GET /events` - Get all events
+- `GET /events/{event_id}` - Get a specific event
+- `PUT /events/{event_id}` - Update an event
+- `DELETE /events/{event_id}` - Delete an event
+
+### Attendees
+- `POST /attendees` - Register a new attendee
+- `GET /attendees` - Get all attendees
+- `GET /attendees/{attendee_id}` - Get a specific attendee
+- `PUT /attendees/{attendee_id}` - Update attendee information
+- `DELETE /attendees/{attendee_id}` - Delete an attendee
+
+### Venues
+- `POST /venues` - Create a new venue
+- `GET /venues` - Get all venues
+- `GET /venues/{venue_id}` - Get a specific venue
+- `PUT /venues/{venue_id}` - Update venue information
+- `DELETE /venues/{venue_id}` - Delete a venue
+
+### Bookings
+- `POST /bookings` - Create a new booking
+- `GET /bookings` - Get all bookings
+- `GET /bookings/{booking_id}` - Get a specific booking
+- `PUT /bookings/{booking_id}` - Update booking information
+- `DELETE /bookings/{booking_id}` - Delete a booking
+
+### Multimedia
+- `POST /upload_event_poster/{event_id}` - Upload an event poster
+- `POST /upload_promo_video/{event_id}` - Upload a promotional video
+- `POST /upload_venue_photo/{venue_id}` - Upload a venue photo
 
 ## Notes
 
@@ -109,6 +214,8 @@ git log                # View commit history
 - Keep `requirements.txt` updated when adding new dependencies
 - Follow the project's git commit conventions for clear version history
 - All development should be done within the virtual environment to avoid system-wide package conflicts
+- CORS is enabled to allow test suite communication with the API
+- File uploads support common image and video formats
 
 ---
 
