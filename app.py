@@ -47,7 +47,7 @@ db = client.event_management_db
 
 @app.get("/")
 def read_root():
-    """Display all available API endpoints"""
+    # Display all available API endpoints
     return {
         "message": "Welcome to Event Management API",
         "documentation": "http://127.0.0.1:8000/docs",
@@ -92,14 +92,14 @@ def read_root():
 # ==================== SANITIZATION & VALIDATION HELPERS ====================
 
 def validate_object_id(id_string: str) -> ObjectId:
-    """Validate and convert string to ObjectId, raising exception if invalid"""
+    # Validate and convert string to ObjectId, raising exception if invalid
     try:
         return ObjectId(id_string)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid ID format")
 
 def sanitize_string(value: str, field_name: str = "field") -> str:
-    """Sanitize string input to prevent injection attacks"""
+    # Sanitize string input to prevent injection attacks
     if not isinstance(value, str):
         return value
     # Remove null bytes which could cause issues
@@ -110,7 +110,7 @@ def sanitize_string(value: str, field_name: str = "field") -> str:
     return value.strip()
 
 def sanitize_filename(filename: str) -> str:
-    """Sanitize filename to prevent path traversal attacks"""
+    # Sanitize filename to prevent path traversal attacks
     # Get just the filename, removing any path components
     filename = Path(filename).name
     # Remove dangerous characters
@@ -240,14 +240,6 @@ class Booking(BaseModel):
         if not isinstance(v, int) or v <= 0:
             raise ValueError('quantity must be a positive integer')
         return v
-
-class EventMultimedia(BaseModel):
-    # Pydantic model for multimedia content data validation
-    event_id: Optional[str] = None
-    venue_id: Optional[str] = None
-    filename: str
-    content_type: str
-    media_type: MediaType
 
 # ==================== EVENT ENDPOINTS ====================
 
