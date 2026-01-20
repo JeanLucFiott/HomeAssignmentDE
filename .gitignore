@@ -67,6 +67,3 @@ logs/
 node_modules/
 package-lock.json
 yarn.lock
-
-# Static files
-static/

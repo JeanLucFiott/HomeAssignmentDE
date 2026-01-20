@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management API - Test Suite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        .container-main {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+            margin-top: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-weight: 700;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        .section-card {
+            border: none;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section-card .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+        .btn-test {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .response-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .response-success {
+            border-left: 4px solid #28a745;
+        }
+        .response-error {
+            border-left: 4px solid #dc3545;
+        }
+        .response-info {
+            border-left: 4px solid #17a2b8;
+        }
+        .tabs-container {
+            margin-bottom: 20px;
+        }
+        .nav-tabs .nav-link {
+            color: #667eea;
+            border-color: #dee2e6;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .form-section {
+            display: none;
+        }
+        .form-section.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .response-json {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #d63384;
+        }
+        .url-display {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .id-storage {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-lg container-main">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎉 Event Management API - Test Suite</h1>
+            <p>Test all endpoints with a user-friendly interface</p>
+        </div>
+
+        <!-- Base URL Configuration -->
+        <div class="card section-card">
+            <div class="card-header">
+                <h5 class="mb-0">⚙️ Configuration</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="baseUrl" class="form-label">Base URL:</label>
+                    <input type="text" class="form-control" id="baseUrl" value="http://127.0.0.1:8000" placeholder="Enter API base URL">
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs for different resources -->
+        <ul class="nav nav-tabs tabs-container" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab">📅 Events</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="attendees-tab" data-bs-toggle="tab" data-bs-target="#attendees" type="button" role="tab">👥 Attendees</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="venues-tab" data-bs-toggle="tab" data-bs-target="#venues" type="button" role="tab">🏢 Venues</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab">🎫 Bookings</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="multimedia-tab" data-bs-toggle="tab" data-bs-target="#multimedia" type="button" role="tab">📸 Multimedia</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- EVENTS TAB -->
+            <div class="tab-pane fade show active" id="events" role="tabpanel">
+                <div class="card section-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">📅 Events Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Create Event -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Create Event (POST)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Event Name:</label>
+                                <input type="text" class="form-control" id="eventName" placeholder="e.g., Tech Conference 2026">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description:</label>
+                                <textarea class="form-control" id="eventDescription" placeholder="Event description..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Date (YYYY-MM-DD):</label>
+                                <input type="date" class="form-control" id="eventDate" placeholder="2026-05-15">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Venue:</label>
+                                <select class="form-control" id="eventVenueId" onfocus="loadVenues('eventVenueId')">
+                                    <option value="">Select a venue...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Max Attendees:</label>
+                                <input type="number" class="form-control" id="eventMaxAttendees" placeholder="500">
+                            </div>
+                            <button class="btn btn-primary btn-test" onclick="createEventHandler()">Create Event</button>
+                        </div>
+                        <hr>
+
+                        <!-- Get All Events -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Get All Events (GET)</h6>
+                            <button class="btn btn-info btn-test" onclick="getAllEvents()">Fetch All Events</button>
+                        </div>
+                        <hr>
+
+                        <!-- Get Event by ID -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Get Event by ID (GET)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Event ID:</label>
+                                <input type="text" class="form-control" id="eventIdGet" placeholder="Enter event ID">
+                            </div>
+                            <button class="btn btn-info btn-test" onclick="getEventById()">Get Event</button>
+                        </div>
+                        <hr>
+
+                        <!-- Update Event -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Update Event (PUT)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Event ID:</label>
+                                <select class="form-control" id="eventIdUpdate" onchange="populateEventForUpdate()">
+                                    <option value="">Select an event...</option>
+                                </select>
+                                <small class="text-muted">Click "Load Events" first to populate the list</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Event Name:</label>
+                                <input type="text" class="form-control" id="eventNameUpdate" placeholder="Enter new event name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description:</label>
+                                <textarea class="form-control" id="eventDescriptionUpdate" placeholder="Enter new description" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Date (ISO format):</label>
+                                <input type="datetime-local" class="form-control" id="eventDateUpdate" placeholder="YYYY-MM-DDTHH:mm">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Venue:</label>
+                                <select class="form-control" id="eventVenueIdUpdate" onfocus="loadVenues('eventVenueIdUpdate')">
+                                    <option value="">Select a venue...</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-info btn-test" onclick="loadEventsForUpdate(); populateEventForUpdate()">Load Event & Auto-populate</button>
+                            <button class="btn btn-warning btn-test" onclick="updateEvent()">Update Event</button>
+                        </div>
+                        <hr>
+
+                        <!-- Delete Event -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Delete Event (DELETE)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Event ID:</label>
+                                <select class="form-control" id="eventIdDelete" onfocus="loadEventsForDelete()">
+                                    <option value="">Select an event...</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-danger btn-test" onclick="deleteEvent()">Delete Event</button>
+                        </div>
+
+                        <!-- Response -->
+                        <div id="eventsResponse"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ATTENDEES TAB -->
+            <div class="tab-pane fade" id="attendees" role="tabpanel">
+                <div class="card section-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">👥 Attendees Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Register Attendee -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Register Attendee (POST)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Name:</label>
+                                <input type="text" class="form-control" id="attendeeName" placeholder="John Doe">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email:</label>
+                                <input type="email" class="form-control" id="attendeeEmail" placeholder="john@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone (Optional):</label>
+                                <input type="tel" class="form-control" id="attendeePhone" placeholder="+1234567890">
+                            </div>
+                            <button class="btn btn-primary btn-test" onclick="createAttendeeHandler()">Register Attendee</button>
+                        </div>
+                        <hr>
+
+                        <!-- Get All Attendees -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Get All Attendees (GET)</h6>
+                            <button class="btn btn-info btn-test" onclick="getAllAttendees()">Fetch All Attendees</button>
+                        </div>
+                        <hr>
+
+                        <!-- Get Attendee by ID -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Get Attendee by ID (GET)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Attendee ID:</label>
+                                <input type="text" class="form-control" id="attendeeIdGet" placeholder="Enter attendee ID">
+                            </div>
+                            <button class="btn btn-info btn-test" onclick="getAttendeeById()">Get Attendee</button>
+                        </div>
+                        <hr>
+
+                        <!-- Update Attendee -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Update Attendee (PUT)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Attendee ID:</label>
+                                <input type="text" class="form-control" id="attendeeIdUpdate" placeholder="Enter attendee ID">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Name:</label>
+                                <input type="text" class="form-control" id="attendeeNameUpdate" placeholder="Updated name">
+                            </div>
+                            <button class="btn btn-warning btn-test" onclick="updateAttendee()">Update Attendee</button>
+                        </div>
+                        <hr>
+
+                        <!-- Delete Attendee -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Delete Attendee (DELETE)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Attendee ID:</label>
+                                <input type="text" class="form-control" id="attendeeIdDelete" placeholder="Enter attendee ID">
+                            </div>
+                            <button class="btn btn-danger btn-test" onclick="deleteAttendee()">Delete Attendee</button>
+                        </div>
+
+                        <!-- Response -->
+                        <div id="attendeesResponse"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VENUES TAB -->
+            <div class="tab-pane fade" id="venues" role="tabpanel">
+                <div class="card section-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">🏢 Venues Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Create Venue -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Create Venue (POST)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Venue Name:</label>
+                                <input type="text" class="form-control" id="venueName" placeholder="Grand Convention Center">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Address:</label>
+                                <input type="text" class="form-control" id="venueAddress" placeholder="123 Main St, City, Country">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Capacity:</label>
+                                <input type="number" class="form-control" id="venueCapacity" placeholder="5000">
+                            </div>
+                            <button class="btn btn-primary btn-test" onclick="createVenueHandler()">Create Venue</button>
+                        </div>
+                        <hr>
+
+                        <!-- Get All Venues -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Get All Venues (GET)</h6>
+                            <button class="btn btn-info btn-test" onclick="getAllVenues()">Fetch All Venues</button>
+                        </div>
+                        <hr>
+
+                        <!-- Get Venue by ID -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Get Venue by ID (GET)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Venue ID:</label>
+                                <input type="text" class="form-control" id="venueIdGet" placeholder="Enter venue ID">
+                            </div>
+                            <button class="btn btn-info btn-test" onclick="getVenueById()">Get Venue</button>
+                        </div>
+                        <hr>
+
+                        <!-- Update Venue -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Update Venue (PUT)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Venue:</label>
+                                <select class="form-control" id="venueIdUpdate" onfocus="loadVenuesForVenueUpdate()" onchange="populateVenueDetails()">
+                                    <option value="">Select a venue...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Venue Name:</label>
+                                <input type="text" class="form-control" id="venueNameUpdate" placeholder="Updated venue name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Address:</label>
+                                <input type="text" class="form-control" id="venueAddressUpdate" placeholder="Updated address">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Capacity:</label>
+                                <input type="number" class="form-control" id="venueCapacityUpdate" placeholder="5000" min="1">
+                            </div>
+                            <button class="btn btn-warning btn-test" onclick="updateVenue()">Update Venue</button>
+                        </div>
+                        <hr>
+
+                        <!-- Delete Venue -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Delete Venue (DELETE)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Venue:</label>
+                                <select class="form-control" id="venueIdDelete" onfocus="loadVenuesForDelete()">
+                                    <option value="">Select a venue...</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-danger btn-test" onclick="deleteVenue()">Delete Venue</button>
+                        </div>
+
+                        <!-- Response -->
+                        <div id="venuesResponse"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOOKINGS TAB -->
+            <div class="tab-pane fade" id="bookings" role="tabpanel">
+                <div class="card section-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">🎫 Bookings Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Create Booking -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Create Booking (POST)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Event:</label>
+                                <select class="form-control" id="bookingEventId" onfocus="loadEventsForBooking()">
+                                    <option value="">Select an event...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Attendees (select multiple):</label>
+                                <select class="form-control" id="bookingAttendeeIds" multiple size="5" onfocus="loadAttendeesForBooking()">
+                                    <option value="">Select attendees...</option>
+                                </select>
+                                <small class="text-muted">Hold Ctrl/Cmd to select multiple attendees</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Ticket Type:</label>
+                                <select class="form-control" id="bookingTicketType">
+                                    <option value="">Select ticket type...</option>
+                                    <option value="VIP">VIP</option>
+                                    <option value="Premium">Premium</option>
+                                    <option value="Standard">Standard</option>
+                                    <option value="General">General</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Quantity:</label>
+                                <input type="number" class="form-control" id="bookingQuantity" placeholder="2" min="1">
+                            </div>
+                            <button class="btn btn-primary btn-test" onclick="createBookingHandler()">Create Booking</button>
+                        </div>
+                        <hr>
+
+                        <!-- Get All Bookings -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Get All Bookings (GET)</h6>
+                            <button class="btn btn-info btn-test" onclick="getAllBookings()">Fetch All Bookings</button>
+                        </div>
+                        <hr>
+
+                        <!-- Get Booking by ID -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Get Booking by ID (GET)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Booking ID:</label>
+                                <input type="text" class="form-control" id="bookingIdGet" placeholder="Enter booking ID">
+                            </div>
+                            <button class="btn btn-info btn-test" onclick="getBookingById()">Get Booking</button>
+                        </div>
+                        <hr>
+
+                        <!-- Update Booking -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Update Booking (PUT)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Booking ID:</label>
+                                <input type="text" class="form-control" id="bookingIdUpdate" placeholder="Enter booking ID">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Quantity:</label>
+                                <input type="number" class="form-control" id="bookingQuantityUpdate" placeholder="Updated quantity">
+                            </div>
+                            <button class="btn btn-warning btn-test" onclick="updateBooking()">Update Booking</button>
+                        </div>
+                        <hr>
+
+                        <!-- Delete Booking -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Delete Booking (DELETE)</h6>
+                            <div class="form-group">
+                                <label class="form-label">Booking ID:</label>
+                                <input type="text" class="form-control" id="bookingIdDelete" placeholder="Enter booking ID">
+                            </div>
+                            <button class="btn btn-danger btn-test" onclick="deleteBooking()">Delete Booking</button>
+                        </div>
+
+                        <!-- Response -->
+                        <div id="bookingsResponse"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MULTIMEDIA TAB -->
+            <div class="tab-pane fade" id="multimedia" role="tabpanel">
+                <div class="card section-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">📸 Multimedia Management</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Upload Event Poster -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Upload Event Poster</h6>
+                            <div class="form-group">
+                                <label class="form-label">Event ID:</label>
+                                <select class="form-control" id="posterEventId" onfocus="loadEventsForPosterUpload()">
+                                    <option value="">Select an event...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Select Image:</label>
+                                <input type="file" class="form-control" id="posterFile" accept="image/*">
+                            </div>
+                            <button class="btn btn-primary btn-test" onclick="uploadEventPoster()">Upload Poster</button>
+                        </div>
+                        <hr>
+
+                        <!-- Upload Promo Video -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Upload Promotional Video</h6>
+                            <div class="form-group">
+                                <label class="form-label">Event ID:</label>
+                                <select class="form-control" id="videoEventId" onfocus="loadEventsForVideoUpload()">
+                                    <option value="">Select an event...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Select Video:</label>
+                                <input type="file" class="form-control" id="videoFile" accept="video/*">
+                            </div>
+                            <button class="btn btn-primary btn-test" onclick="uploadPromoVideo()">Upload Video</button>
+                        </div>
+                        <hr>
+
+                        <!-- Upload Venue Photo -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Upload Venue Photo</h6>
+                            <div class="form-group">
+                                <label class="form-label">Venue ID:</label>
+                                <select class="form-control" id="photoVenueId" onfocus="loadVenuesForPhotoUpload()">
+                                    <option value="">Select a venue...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Select Image:</label>
+                                <input type="file" class="form-control" id="photoFile" accept="image/*">
+                            </div>
+                            <button class="btn btn-primary btn-test" onclick="uploadVenuePhoto()">Upload Photo</button>
+                        </div>
+
+                        <!-- Response -->
+                        <div id="multimediaResponse"></div>
+
+                        <hr>
+
+                        <!-- Retrieve Event Poster -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Retrieve Event Poster</h6>
+                            <div class="form-group">
+                                <label class="form-label">Event ID:</label>
+                                <select class="form-control" id="posterEventIdRetrieve" onfocus="loadEventsForPosterRetrieve()">
+                                    <option value="">Select an event...</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-secondary btn-test" onclick="retrieveEventPoster()">Get Poster</button>
+                        </div>
+                        <hr>
+
+                        <!-- Retrieve Promo Video -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Retrieve Promo Video</h6>
+                            <div class="form-group">
+                                <label class="form-label">Event ID:</label>
+                                <select class="form-control" id="videoEventIdRetrieve" onfocus="loadEventsForVideoRetrieve()">
+                                    <option value="">Select an event...</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-secondary btn-test" onclick="retrievePromoVideo()">Get Video</button>
+                        </div>
+                        <hr>
+
+                        <!-- Retrieve Venue Photo -->
+                        <div class="mb-4">
+                            <h6 class="mb-3">Retrieve Venue Photo</h6>
+                            <div class="form-group">
+                                <label class="form-label">Venue ID:</label>
+                                <select class="form-control" id="photoVenueIdRetrieve" onfocus="loadVenuesForPhotoRetrieve()">
+                                    <option value="">Select a venue...</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-secondary btn-test" onclick="retrieveVenuePhoto()">Get Photo</button>
+                        </div>
+
+                        <!-- Response -->
+                        <div id="multimediaResponse"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Helper function to get base URL
+        function getBaseUrl() {
+            return document.getElementById('baseUrl').value;
+        }
+
+        // Helper function to clear form inputs by ID
+        function clearFormInputs(...inputIds) {
+            inputIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    if (element.tagName === 'SELECT') {
+                        element.value = '';
+                    } else if (element.type === 'checkbox' || element.type === 'radio') {
+                        element.checked = false;
+                    } else {
+                        element.value = '';
+                    }
+                }
+            });
+        }
+
+        // Helper function to display responses
+        function displayResponse(responseDiv, status, data, url) {
+            const statusClass = status >= 200 && status < 300 ? 'response-success' : 'response-error';
+            const html = `
+                <div class="response-box ${statusClass}">
+                    <strong>Status:</strong> ${status}<br>
+                    <strong>URL:</strong> ${url}<br>
+                    <strong>Response:</strong><br>
+                    <div class="response-json">${JSON.stringify(data, null, 2)}</div>
+                </div>
+            `;
+            document.getElementById(responseDiv).innerHTML = html;
+        }
+
+        // ==================== GENERIC LOAD FUNCTIONS ====================
+        async function loadVenues(selectElementId) {
+            const url = `${getBaseUrl()}/venues`;
+            try {
+                const response = await fetch(url);
+                const venues = await response.json();
+                const select = document.getElementById(selectElementId);
+                select.innerHTML = '<option value="">Select a venue...</option>';
+                venues.forEach(venue => {
+                    const option = document.createElement('option');
+                    option.value = venue._id;
+                    option.textContent = `${venue.name} (Capacity: ${venue.capacity})`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                alert('Failed to load venues: ' + error.message);
+            }
+        }
+
+        async function loadEvents(selectElementId) {
+            const url = `${getBaseUrl()}/events`;
+            try {
+                const response = await fetch(url);
+                const events = await response.json();
+                const select = document.getElementById(selectElementId);
+                select.innerHTML = '<option value="">Select an event...</option>';
+                events.forEach(event => {
+                    const option = document.createElement('option');
+                    option.value = event._id;
+                    option.textContent = `${event.name} (${event.date})`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                alert('Failed to load events: ' + error.message);
+            }
+        }
+
+        async function loadAttendees(selectElementId) {
+            const url = `${getBaseUrl()}/attendees`;
+            try {
+                const response = await fetch(url);
+                const attendees = await response.json();
+                const select = document.getElementById(selectElementId);
+                select.innerHTML = '<option value="">Select attendees...</option>';
+                attendees.forEach(attendee => {
+                    const option = document.createElement('option');
+                    option.value = attendee._id;
+                    option.textContent = `${attendee.name} (${attendee.email})`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                alert('Failed to load attendees: ' + error.message);
+            }
+        }
+
+        // ==================== EVENTS ====================
+
+        async function createEventHandler() {
+            const data = {
+                name: document.getElementById('eventName').value,
+                description: document.getElementById('eventDescription').value,
+                date: document.getElementById('eventDate').value,
+                venue_id: document.getElementById('eventVenueId').value,
+                max_attendees: parseInt(document.getElementById('eventMaxAttendees').value)
+            };
+            const url = `${getBaseUrl()}/events`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                displayResponse('eventsResponse', response.status, result, url);
+                if (response.ok) {
+                    clearFormInputs('eventName', 'eventDescription', 'eventDate', 'eventVenueId', 'eventMaxAttendees');
+                }
+            } catch (error) {
+                displayResponse('eventsResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function getAllEvents() {
+            const url = `${getBaseUrl()}/events`;
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                displayResponse('eventsResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('eventsResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function getEventById() {
+            const id = document.getElementById('eventIdGet').value;
+            const url = `${getBaseUrl()}/events/${id}`;
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                displayResponse('eventsResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('eventsResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function populateEventForUpdate() {
+            const eventId = document.getElementById('eventIdUpdate').value;
+            if (!eventId) return;
+            
+            const url = `${getBaseUrl()}/events/${eventId}`;
+            try {
+                const response = await fetch(url);
+                const event = await response.json();
+                document.getElementById('eventNameUpdate').value = event.name || '';
+                document.getElementById('eventDescriptionUpdate').value = event.description || '';
+                document.getElementById('eventDateUpdate').value = event.date || '';
+                document.getElementById('eventVenueIdUpdate').value = event.venue_id || '';
+            } catch (error) {
+                alert('Failed to load event details: ' + error.message);
+            }
+        }
+
+        async function loadEventsForUpdate() {
+            await loadEvents('eventIdUpdate');
+        }
+
+        async function loadVenuesForUpdate() {
+            await loadVenues('eventVenueIdUpdate');
+        }
+
+        async function updateEvent() {
+            const id = document.getElementById('eventIdUpdate').value;
+            const name = document.getElementById('eventNameUpdate').value;
+            const description = document.getElementById('eventDescriptionUpdate').value;
+            const date = document.getElementById('eventDateUpdate').value;
+            const venueId = document.getElementById('eventVenueIdUpdate').value;
+            
+            // Build data object with only provided values
+            const data = {};
+            if (name) data.name = name;
+            if (description) data.description = description;
+            if (date) data.date = date.replace('T', 'T'); // Keep ISO format
+            if (venueId) data.venue_id = venueId;
+            
+            // max_attendees is required by the backend model, so we need to get current value
+            // For now, require at least one field to be updated
+            if (Object.keys(data).length === 0) {
+                alert('Please fill in at least one field to update');
+                return;
+            }
+            
+            const url = `${getBaseUrl()}/events/${id}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                displayResponse('eventsResponse', response.status, result, url);
+                if (response.ok) {
+                    clearFormInputs('eventIdUpdate', 'eventNameUpdate', 'eventDescriptionUpdate', 'eventDateUpdate', 'eventVenueIdUpdate');
+                }
+            } catch (error) {
+                displayResponse('eventsResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function loadEventsForDelete() {
+            await loadEvents('eventIdDelete');
+        }
+
+        async function deleteEvent() {
+            const id = document.getElementById('eventIdDelete').value;
+            const url = `${getBaseUrl()}/events/${id}`;
+            try {
+                const response = await fetch(url, { method: 'DELETE' });
+                const result = await response.json();
+                displayResponse('eventsResponse', response.status, result, url);
+                if (response.ok) {
+                    clearFormInputs('eventIdDelete');
+                }
+            } catch (error) {
+                displayResponse('eventsResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        // ==================== ATTENDEES ====================
+        async function createAttendeeHandler() {
+            const data = {
+                name: document.getElementById('attendeeName').value,
+                email: document.getElementById('attendeeEmail').value,
+                phone: document.getElementById('attendeePhone').value || null
+            };
+            const url = `${getBaseUrl()}/attendees`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                displayResponse('attendeesResponse', response.status, result, url);
+                if (response.ok) {
+                    clearFormInputs('attendeeName', 'attendeeEmail', 'attendeePhone');
+                }
+            } catch (error) {
+                displayResponse('attendeesResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function getAllAttendees() {
+            const url = `${getBaseUrl()}/attendees`;
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                displayResponse('attendeesResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('attendeesResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function getAttendeeById() {
+            const id = document.getElementById('attendeeIdGet').value;
+            const url = `${getBaseUrl()}/attendees/${id}`;
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                displayResponse('attendeesResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('attendeesResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function updateAttendee() {
+            const id = document.getElementById('attendeeIdUpdate').value;
+            const data = {
+                name: document.getElementById('attendeeNameUpdate').value || 'John Doe',
+                email: 'john@example.com',
+                phone: null
+            };
+            const url = `${getBaseUrl()}/attendees/${id}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                displayResponse('attendeesResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('attendeesResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function deleteAttendee() {
+            const id = document.getElementById('attendeeIdDelete').value;
+            const url = `${getBaseUrl()}/attendees/${id}`;
+            try {
+                const response = await fetch(url, { method: 'DELETE' });
+                const result = await response.json();
+                displayResponse('attendeesResponse', response.status, result, url);
+                if (response.ok) {
+                    clearFormInputs('attendeeIdDelete');
+                }
+            } catch (error) {
+                displayResponse('attendeesResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        // ==================== VENUES ====================
+        async function createVenueHandler() {
+            const data = {
+                name: document.getElementById('venueName').value,
+                address: document.getElementById('venueAddress').value,
+                capacity: parseInt(document.getElementById('venueCapacity').value)
+            };
+            const url = `${getBaseUrl()}/venues`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                displayResponse('venuesResponse', response.status, result, url);
+                if (response.ok) {
+                    clearFormInputs('venueName', 'venueAddress', 'venueCapacity');
+                }
+            } catch (error) {
+                displayResponse('venuesResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function getAllVenues() {
+            const url = `${getBaseUrl()}/venues`;
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                displayResponse('venuesResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('venuesResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function getVenueById() {
+            const id = document.getElementById('venueIdGet').value;
+            const url = `${getBaseUrl()}/venues/${id}`;
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                displayResponse('venuesResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('venuesResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function loadVenuesForVenueUpdate() {
+            await loadVenues('venueIdUpdate');
+        }
+
+        async function populateVenueDetails() {
+            const venueId = document.getElementById('venueIdUpdate').value;
+            if (!venueId) {
+                // Clear fields if no venue selected
+                document.getElementById('venueNameUpdate').value = '';
+                document.getElementById('venueAddressUpdate').value = '';
+                document.getElementById('venueCapacityUpdate').value = '';
+                return;
+            }
+
+            const url = `${getBaseUrl()}/venues/${venueId}`;
+            try {
+                const response = await fetch(url);
+                const venue = await response.json();
+                // Populate the form fields with venue details
+                document.getElementById('venueNameUpdate').value = venue.name;
+                document.getElementById('venueAddressUpdate').value = venue.address;
+                document.getElementById('venueCapacityUpdate').value = venue.capacity;
+            } catch (error) {
+                alert('Failed to load venue details: ' + error.message);
+            }
+        }
+
+        async function updateVenue() {
+            const id = document.getElementById('venueIdUpdate').value;
+            const name = document.getElementById('venueNameUpdate').value;
+            const address = document.getElementById('venueAddressUpdate').value;
+            const capacity = parseInt(document.getElementById('venueCapacityUpdate').value);
+
+            if (!id) {
+                alert('Please select a venue');
+                return;
+            }
+            if (!name) {
+                alert('Please enter a venue name');
+                return;
+            }
+            if (!address) {
+                alert('Please enter an address');
+                return;
+            }
+            if (!capacity || capacity <= 0) {
+                alert('Please enter a valid capacity');
+                return;
+            }
+
+            const data = {
+                name: name,
+                address: address,
+                capacity: capacity
+            };
+            const url = `${getBaseUrl()}/venues/${id}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                displayResponse('venuesResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('venuesResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function loadVenuesForDelete() {
+            await loadVenues('venueIdDelete');
+        }
+
+        async function deleteVenue() {
+            const id = document.getElementById('venueIdDelete').value;
+            if (!id) {
+                alert('Please select a venue');
+                return;
+            }
+            const url = `${getBaseUrl()}/venues/${id}`;
+            try {
+                const response = await fetch(url, { method: 'DELETE' });
+                const result = await response.json();
+                displayResponse('venuesResponse', response.status, result, url);
+                if (response.ok) {
+                    document.getElementById('venueIdDelete').value = '';
+                }
+            } catch (error) {
+                displayResponse('venuesResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        // ==================== BOOKINGS ====================
+        async function loadEventsForBooking() {
+            await loadEvents('bookingEventId');
+        }
+
+        async function loadAttendeesForBooking() {
+            await loadAttendees('bookingAttendeeIds');
+        }
+
+        async function createBookingHandler() {
+            const eventId = document.getElementById('bookingEventId').value;
+            const attendeeIdsSelect = document.getElementById('bookingAttendeeIds');
+            const selectedOptions = Array.from(attendeeIdsSelect.selectedOptions);
+            const attendeeIds = selectedOptions.map(option => option.value).filter(id => id !== '');
+            const ticketType = document.getElementById('bookingTicketType').value;
+            const quantity = parseInt(document.getElementById('bookingQuantity').value);
+
+            if (!eventId) {
+                alert('Please select an event');
+                return;
+            }
+            if (attendeeIds.length === 0) {
+                alert('Please select at least one attendee');
+                return;
+            }
+            if (!ticketType) {
+                alert('Please select a ticket type');
+                return;
+            }
+            if (!quantity || quantity <= 0) {
+                alert('Please enter a valid quantity');
+                return;
+            }
+
+            const data = {
+                event_id: eventId,
+                attendee_ids: attendeeIds,
+                ticket_type: ticketType,
+                quantity: quantity
+            };
+            const url = `${getBaseUrl()}/bookings`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                displayResponse('bookingsResponse', response.status, result, url);
+                if (response.ok) {
+                    clearFormInputs('bookingEventId', 'bookingAttendeeIds', 'bookingTicketType', 'bookingQuantity');
+                    document.getElementById('bookingAttendeeIds').value = '';
+                }
+            } catch (error) {
+                displayResponse('bookingsResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function getAllBookings() {
+            const url = `${getBaseUrl()}/bookings`;
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                displayResponse('bookingsResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('bookingsResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function getBookingById() {
+            const id = document.getElementById('bookingIdGet').value;
+            const url = `${getBaseUrl()}/bookings/${id}`;
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                displayResponse('bookingsResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('bookingsResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function updateBooking() {
+            const id = document.getElementById('bookingIdUpdate').value;
+            const data = {
+                event_id: 'event_id_here',
+                attendee_ids: ['attendee_id_here'],
+                ticket_type: 'VIP',
+                quantity: parseInt(document.getElementById('bookingQuantityUpdate').value) || 2
+            };
+            const url = `${getBaseUrl()}/bookings/${id}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                displayResponse('bookingsResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('bookingsResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function deleteBooking() {
+            const id = document.getElementById('bookingIdDelete').value;
+            const url = `${getBaseUrl()}/bookings/${id}`;
+            try {
+                const response = await fetch(url, { method: 'DELETE' });
+                const result = await response.json();
+                displayResponse('bookingsResponse', response.status, result, url);
+                if (response.ok) {
+                    clearFormInputs('bookingIdDelete');
+                }
+            } catch (error) {
+                displayResponse('bookingsResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        // ==================== MULTIMEDIA ====================
+        async function uploadEventPoster() {
+            const eventId = document.getElementById('posterEventId').value;
+            const file = document.getElementById('posterFile').files[0];
+            if (!file) {
+                alert('Please select a file');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', file);
+            const url = `${getBaseUrl()}/upload_event_poster/${eventId}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                displayResponse('multimediaResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('multimediaResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function uploadPromoVideo() {
+            const eventId = document.getElementById('videoEventId').value;
+            const file = document.getElementById('videoFile').files[0];
+            if (!file) {
+                alert('Please select a file');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', file);
+            const url = `${getBaseUrl()}/upload_promo_video/${eventId}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                displayResponse('multimediaResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('multimediaResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function uploadVenuePhoto() {
+            const venueId = document.getElementById('photoVenueId').value;
+            const file = document.getElementById('photoFile').files[0];
+            if (!file) {
+                alert('Please select a file');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', file);
+            const url = `${getBaseUrl()}/upload_venue_photo/${venueId}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                displayResponse('multimediaResponse', response.status, result, url);
+            } catch (error) {
+                displayResponse('multimediaResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        // ==================== MULTIMEDIA UPLOAD ====================
+        async function loadEventsForPosterUpload() {
+            await loadEvents('posterEventId');
+        }
+
+        async function loadEventsForVideoUpload() {
+            await loadEvents('videoEventId');
+        }
+
+        async function loadVenuesForPhotoUpload() {
+            await loadVenues('photoVenueId');
+        }
+
+        // ==================== MULTIMEDIA RETRIEVAL ====================
+        async function loadEventsForPosterRetrieve() {
+            await loadEvents('posterEventIdRetrieve');
+        }
+
+        async function retrieveEventPoster() {
+            const eventId = document.getElementById('posterEventIdRetrieve').value;
+            if (!eventId) {
+                alert('Please select an event');
+                return;
+            }
+            const url = `${getBaseUrl()}/event_poster/${eventId}`;
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    const posters = await response.json();
+                    displayResponse('multimediaResponse', response.status, posters, url);
+                    // Display posters with download links
+                    if (posters && Array.isArray(posters) && posters.length > 0) {
+                        let html = '<br><strong>Posters:</strong><br>';
+                        posters.forEach((poster, index) => {
+                            html += `<div style="margin-top: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                                <p><strong>${poster.filename}</strong> - ${poster.content_type}</p>
+                                <p>Uploaded: ${new Date(poster.uploaded_at).toLocaleString()}</p>
+                                <a href="${getBaseUrl()}${poster.download_url}" target="_blank" class="btn btn-sm btn-info">Download Poster</a>
+                                <img src="${getBaseUrl()}${poster.download_url}" style="max-width: 100%; max-height: 300px; border-radius: 5px; margin-top: 10px; display: block;">
+                            </div>`;
+                        });
+                        document.getElementById('multimediaResponse').innerHTML += html;
+                    }
+                } else {
+                    const result = await response.json();
+                    displayResponse('multimediaResponse', response.status, result, url);
+                }
+            } catch (error) {
+                displayResponse('multimediaResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function loadEventsForVideoRetrieve() {
+            await loadEvents('videoEventIdRetrieve');
+        }
+
+        async function retrievePromoVideo() {
+            const eventId = document.getElementById('videoEventIdRetrieve').value;
+            if (!eventId) {
+                alert('Please select an event');
+                return;
+            }
+            const url = `${getBaseUrl()}/promo_video/${eventId}`;
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    const videos = await response.json();
+                    displayResponse('multimediaResponse', response.status, videos, url);
+                    // Display videos with download links
+                    if (videos && Array.isArray(videos) && videos.length > 0) {
+                        let html = '<br><strong>Promo Videos:</strong><br>';
+                        videos.forEach((video, index) => {
+                            html += `<div style="margin-top: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                                <p><strong>${video.filename}</strong> - ${video.content_type}</p>
+                                <p>Uploaded: ${new Date(video.uploaded_at).toLocaleString()}</p>
+                                <a href="${getBaseUrl()}${video.download_url}" target="_blank" class="btn btn-sm btn-info">Download Video</a>
+                                <video width="100%" height="300" style="border-radius: 5px; margin-top: 10px; display: block;" controls>
+                                    <source src="${getBaseUrl()}${video.download_url}" type="${video.content_type}">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>`;
+                        });
+                        document.getElementById('multimediaResponse').innerHTML += html;
+                    }
+                } else {
+                    const result = await response.json();
+                    displayResponse('multimediaResponse', response.status, result, url);
+                }
+            } catch (error) {
+                displayResponse('multimediaResponse', 0, { error: error.message }, url);
+            }
+        }
+
+        async function loadVenuesForPhotoRetrieve() {
+            await loadVenues('photoVenueIdRetrieve');
+        }
+
+        async function retrieveVenuePhoto() {
+            const venueId = document.getElementById('photoVenueIdRetrieve').value;
+            if (!venueId) {
+                alert('Please select a venue');
+                return;
+            }
+            const url = `${getBaseUrl()}/venue_photo/${venueId}`;
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    const photos = await response.json();
+                    displayResponse('multimediaResponse', response.status, photos, url);
+                    // Display photos with download links
+                    if (photos && Array.isArray(photos) && photos.length > 0) {
+                        let html = '<br><strong>Venue Photos:</strong><br>';
+                        photos.forEach((photo, index) => {
+                            html += `<div style="margin-top: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                                <p><strong>${photo.filename}</strong> - ${photo.content_type}</p>
+                                <p>Uploaded: ${new Date(photo.uploaded_at).toLocaleString()}</p>
+                                <a href="${getBaseUrl()}${photo.download_url}" target="_blank" class="btn btn-sm btn-info">Download Photo</a>
+                                <img src="${getBaseUrl()}${photo.download_url}" style="max-width: 100%; max-height: 300px; border-radius: 5px; margin-top: 10px; display: block;">
+                            </div>`;
+                        });
+                        document.getElementById('multimediaResponse').innerHTML += html;
+                    }
+                } else {
+                    const result = await response.json();
+                    displayResponse('multimediaResponse', response.status, result, url);
+                }
+            } catch (error) {
+                displayResponse('multimediaResponse', 0, { error: error.message }, url);
+            }
+        }
+    </script>
+</body>
+</html>
